@@ -1,13 +1,292 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TX COMMAND</title>
+    
+    <!-- Google Fonts for Premium Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
+<body class="theme-cyber-dark lang-en">
 
-<body>
-    <h1>My App</h1>
-    <p>Welcome to my app.</p>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-container">
+        <div class="splash-logo">
+            <i class="fa-solid fa-terminal"></i>
+            <h1>TX COMMAND</h1>
+            <p class="splash-subtitle">PREMIUM CYBER ENCYCLOPEDIA</p>
+        </div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- App Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <i class="fa-solid fa-terminal logo-icon"></i>
+            <h2>TX COMMAND</h2>
+        </div>
+        <div class="header-right">
+            <button id="btn-language" class="icon-btn" title="Toggle Language">
+                <i class="fa-solid fa-language"></i>
+            </button>
+            <!-- Changed Settings to Menu Icon -->
+            <button id="btn-menu" class="icon-btn" title="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+        
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="search-input" placeholder="Search commands, flags, tools..." autocomplete="off">
+                <i class="fa-solid fa-xmark clear-icon" id="search-clear" style="display: none;"></i>
+            </div>
+        </section>
+
+        <!-- Categories Scroller -->
+        <section class="category-section">
+            <div class="category-scroll" id="category-container">
+                <!-- Categories will be injected here via ui.js -->
+            </div>
+        </section>
+
+        <!-- Commands Grid / List -->
+        <section class="commands-section">
+            <div class="section-header">
+                <h3 id="current-section-title" data-en="All Commands" data-hi="सभी कमांड्स">All Commands</h3>
+                <span class="command-count" id="command-count">0</span>
+            </div>
+            
+            <div id="commands-container" class="commands-grid">
+                <!-- Command Cards will be injected here via ui.js -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fa-solid fa-ghost"></i>
+                <h4 data-en="No commands found" data-hi="कोई कमांड नहीं मिली">No commands found</h4>
+                <p data-en="Try a different search term" data-hi="कोई दूसरा शब्द खोज कर देखें">Try a different search term</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-target="home">
+            <i class="fa-solid fa-house"></i>
+            <span data-en="Home" data-hi="होम">Home</span>
+        </button>
+        <button class="nav-item" data-target="favorites">
+            <i class="fa-solid fa-star"></i>
+            <span data-en="Favorites" data-hi="पसंदीदा">Favorites</span>
+        </button>
+        <button class="nav-item" data-target="recent">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span data-en="Recent" data-hi="हाल ही में">Recent</span>
+        </button>
+    </nav>
+
+    <!-- Command Detail Modal -->
+    <div id="detail-modal" class="modal-overlay">
+        <div class="modal-content detail-content">
+            <div class="modal-header">
+                <div class="detail-tags">
+                    <span id="detail-category" class="tag category-tag">Category</span>
+                    <span id="detail-difficulty" class="tag difficulty-tag">Difficulty</span>
+                </div>
+                <button id="btn-close-detail" class="icon-btn close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body scrollable">
+                <div class="detail-title-area">
+                    <h2 id="detail-command" class="terminal-text">command</h2>
+                    <button id="btn-favorite-detail" class="icon-btn favorite-btn">
+                        <i class="fa-regular fa-star"></i>
+                    </button>
+                </div>
+                
+                <h3 id="detail-title" class="translated-text">Command Title</h3>
+                <p id="detail-description" class="translated-text">Description goes here.</p>
+                
+                <!-- Warning Section -->
+                <div id="detail-warning" class="warning-box" style="display: none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <p class="translated-text"></p>
+                </div>
+
+                <div class="code-section">
+                    <div class="code-header">
+                        <span>Syntax</span>
+                    </div>
+                    <div class="code-block">
+                        <code id="detail-syntax"></code>
+                    </div>
+                </div>
+
+                <div class="code-section">
+                    <div class="code-header">
+                        <span>Example</span>
+                        <button class="copy-btn" id="btn-copy-example">
+                            <i class="fa-regular fa-copy"></i> <span data-en="Copy" data-hi="कॉपी">Copy</span>
+                        </button>
+                    </div>
+                    <div class="code-block">
+                        <code id="detail-example"></code>
+                    </div>
+                </div>
+
+                <div class="usage-section">
+                    <h4 data-en="When to use:" data-hi="कब उपयोग करें:">When to use:</h4>
+                    <p id="detail-when-to-use" class="translated-text">Usage context here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU Modal (Replaces Settings Modal) -->
+    <div id="menu-modal" class="modal-overlay">
+        <div class="modal-content settings-content">
+            <div class="modal-header">
+                <h2 data-en="MENU" data-hi="मेन्यू">MENU</h2>
+                <button id="btn-close-menu" class="icon-btn close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-body scrollable">
+                
+                <!-- 1. THEME -->
+                <div class="setting-group">
+                    <h4 data-en="1. THEME" data-hi="1. थीम">1. THEME</h4>
+                    <div class="theme-options">
+                        <button class="theme-btn active" data-theme="theme-cyber-dark">Cyber Dark</button>
+                        <button class="theme-btn" data-theme="theme-terminal-green">Terminal Green</button>
+                        <button class="theme-btn" data-theme="theme-clean-light">Clean Light</button>
+                    </div>
+                </div>
+
+                <!-- 2. TOOLS -->
+                <div class="setting-group">
+                    <h4 data-en="2. TOOLS" data-hi="2. टूल्स">2. TOOLS</h4>
+                    <div class="tools-accordion">
+                        
+                        <!-- KALI LINUX -->
+                        <div class="tool-item">
+                            <button class="tool-toggle-btn">
+                                <i class="fa-brands fa-linux"></i> KALI LINUX
+                                <i class="fa-solid fa-chevron-down float-right"></i>
+                            </button>
+                            <div class="tool-submenu" style="display: none;">
+                                <!-- Install Process -->
+                                <div class="tool-sub-item">
+                                    <button class="tool-sub-toggle-btn">
+                                        INSTALL PROCESS <i class="fa-solid fa-chevron-down float-right"></i>
+                                    </button>
+                                    <div class="tool-details" style="display: none;">
+                                        <p class="translated-text" data-en="Install commands for Termux:" data-hi="Termux में इंस्टॉल करने के कमांड्स:">Install commands for Termux:</p>
+                                        <div class="code-block">
+                                            <code>pkg install wget<br>wget -O install-nethunter-termux https://offs.ec/2MceZWr<br>chmod +x install-nethunter-termux<br>./install-nethunter-termux</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Commands -->
+                                <div class="tool-sub-item">
+                                    <button class="tool-sub-toggle-btn">
+                                        COMMANDS <i class="fa-solid fa-chevron-down float-right"></i>
+                                    </button>
+                                    <div class="tool-details" style="display: none;">
+                                        <p class="translated-text" data-en="Kali Linux commands are available on the home screen." data-hi="काली लिनक्स के सभी कमांड्स होम स्क्रीन पर उपलब्ध हैं।">Kali Linux commands are available on the home screen.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- UBUNTU -->
+                        <div class="tool-item">
+                            <button class="tool-toggle-btn">
+                                <i class="fa-brands fa-ubuntu"></i> UBUNTU
+                                <i class="fa-solid fa-chevron-down float-right"></i>
+                            </button>
+                            <div class="tool-submenu" style="display: none;">
+                                <!-- Install Process -->
+                                <div class="tool-sub-item">
+                                    <button class="tool-sub-toggle-btn">
+                                        INSTALL PROCESS <i class="fa-solid fa-chevron-down float-right"></i>
+                                    </button>
+                                    <div class="tool-details" style="display: none;">
+                                        <p class="translated-text" data-en="Install commands for Termux:" data-hi="Termux में इंस्टॉल करने के कमांड्स:">Install commands for Termux:</p>
+                                        <div class="code-block">
+                                            <code>pkg install proot-distro<br>proot-distro install ubuntu<br>proot-distro login ubuntu</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- DATA (Kept for clearing history/favorites) -->
+                <div class="setting-group">
+                    <h4 data-en="3. DATA" data-hi="3. डेटा">3. DATA</h4>
+                    <button id="btn-clear-recent" class="action-btn danger-btn">
+                        <i class="fa-solid fa-trash-can"></i> 
+                        <span data-en="Clear Recent History" data-hi="हाल की हिस्ट्री मिटाएं">Clear Recent History</span>
+                    </button>
+                    <button id="btn-clear-favorites" class="action-btn danger-btn">
+                        <i class="fa-solid fa-star-half-stroke"></i> 
+                        <span data-en="Reset Favorites" data-hi="पसंदीदा रीसेट करें">Reset Favorites</span>
+                    </button>
+                </div>
+                
+                <!-- About -->
+                <div class="setting-group about-group">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h4>TX COMMAND</h4>
+                    <p>Premium Command Encyclopedia</p>
+                    <small>Version 1.0.0</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- JavaScript Modules (Modular Data Approach) -->
+    
+    <!-- 1. Core Data (Categories List & Setup) -->
+    <script src="data_core.js"></script>
+    
+    <!-- 2. Command Batches (Category wise files) -->
+    <script src="data_basics.js"></script>
+    <script src="data_files.js"></script>
+    <script src="data_network.js"></script>
+    <script src="data_security.js"></script>
+    <script src="data_termux.js"></script>
+    <script src="data_dev.js"></script>
+    <script src="data_system.js"></script>
+    <script src="data_text_archives.js"></script>
+    <script src="data_misc.js"></script>
+    <script src="data_extra.js"></script>
+
+    <!-- 3. UI and Main Logic -->
+    <script src="ui.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
